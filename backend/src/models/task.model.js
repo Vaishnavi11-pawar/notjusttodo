@@ -2,7 +2,7 @@ import mongoose, {Schema} from "mongoose";
 
 const taskSchema = new Schema(
     {
-        user_id: {
+        userId: {
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true
@@ -13,7 +13,8 @@ const taskSchema = new Schema(
         },
         status: {
             type: String,
-            enum: ['pending', 'completed'] 
+            enum: ['pending', 'completed'],
+            default: 'pending'
         },
         collaborators: {
             type: [String],

@@ -112,11 +112,36 @@ const getTasks = asyncHandler(async(req, res) => {
 })
 
 const updateTaskStatus = asyncHandler(async(req, res) => {
-
+    try {
+        const {taskId} = req.params;
+        const userId = req.user?._id;
+        if(!taskId) {
+            throw new ApiError(400, "Task ID is required.");
+        }
+    
+        const existingTask = await Task.findOne({_id: taskId, userId});
+        if(!existingTask) {
+            throw new ApiError(404, "Task not found.");
+        }
+    
+        existingTask.status = 'completed';
+        const updatedTask = await existingTask.save();
+    
+        return res
+            .status(200)
+            .json(new ApiResponse(200, updatedTask, "Task updated successfully."));
+    
+    } catch (error) {
+        console.log("Error while updating task status: ", error);
+        return res
+            .status(500)
+            .json(new ApiError(500, "Internal server error while updating task status."));
+    }
 })
 
 export {
     addTask,
     deleteTask,
-    updateTask
+    updateTask,
+    updateTaskStatus
 }

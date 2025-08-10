@@ -75,7 +75,36 @@ const deleteTask = asyncHandler(async(req, res) => {
 })
 
 const updateTask = asyncHandler(async(req, res) => {
+    try {
+        const {taskId} = req.params;
+        const {task} = req.body;
+        const userId = req.user?._id;
 
+        if(!taskId) {
+            throw new ApiError(400, "Task ID is required.");
+        }
+        if(!task || task.trim() === "") {
+            throw new ApiError(400, "Enter the Task.");
+        }
+
+        const existingTask = await Task.findOne({_id: taskId, userId});
+        if(!existingTask) {
+            throw new ApiError(404, "Task not found.");
+        }
+
+        existingTask.task = task;
+        const updatedTask = await existingTask.save();
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, updatedTask, "Task updated successfully."));
+
+    } catch (error) {
+        console.log("Error while updating the task: ", error);
+        return res 
+            .status(500)
+            .json(new ApiError(500, "Internal server error while updating the task."))
+    }
 })
 
 const getTasks = asyncHandler(async(req, res) => {
@@ -88,5 +117,6 @@ const updateTaskStatus = asyncHandler(async(req, res) => {
 
 export {
     addTask,
-    deleteTask
+    deleteTask,
+    updateTask
 }

@@ -108,7 +108,31 @@ const updateTask = asyncHandler(async(req, res) => {
 })
 
 const getTasks = asyncHandler(async(req, res) => {
+    try {
+        const userId = req.user?._id;
+        if(!userId) {
+            throw new ApiError(401, "user not found");
+        }
 
+        const page = 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const tasks = await Task.find({ userId })
+            .skip(offset)
+            .limit(limit)
+            .sort({ createdAt: -1 });
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, tasks, "Tasks fetched successfully."));
+
+    } catch (error) {
+        console.log("Error while fetching the tasks: ", error);
+        return res
+            .status(500)
+            .json(new ApiError(500, "Internal server error while fetching the tasks."))
+    }
 })
 
 const updateTaskStatus = asyncHandler(async(req, res) => {
@@ -143,5 +167,6 @@ export {
     addTask,
     deleteTask,
     updateTask,
-    updateTaskStatus
+    updateTaskStatus,
+    getTasks
 }

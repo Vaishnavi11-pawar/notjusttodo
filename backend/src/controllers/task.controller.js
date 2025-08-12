@@ -42,7 +42,7 @@ const addTask = asyncHandler(async(req, res) => {
             await transporter.sendMail(mailOptions);
         }
 
-        if(!deadline || new Date(deadline) <= new Date()) {
+        if(!deadline || new Date(deadline) < new Date()) {
             throw new ApiError(400, "deadline must be valid future date.")
         }
         

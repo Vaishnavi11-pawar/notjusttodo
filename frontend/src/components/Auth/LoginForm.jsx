@@ -15,7 +15,7 @@ function LoginForm() {
 
         try {
             const response = await axios.post('/api/v1/login', {email, password});
-            const accessToken = response.data?.data?.user?.accessToken;
+            const accessToken = response.data?.data?.accessToken;
             const username = response.data?.data?.user?.username;
 
             if(accessToken) {

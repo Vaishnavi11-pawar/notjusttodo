@@ -33,7 +33,7 @@ const taskSchema = new Schema(
             required: true,
             validate: {
                 validator: function (value) {
-                    return value > new Date();
+                    return value >= new Date();
                 },
                 message: "Deadline must be a future date."
             }

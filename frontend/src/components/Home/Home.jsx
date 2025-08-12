@@ -3,15 +3,38 @@ import { useState, forwardRef } from 'react';
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import {Calendar, X} from "lucide-react"
+import axios from "axios";
 
 function Home() {
   const [showInviteDiv ,setShowInviteDiv] = useState(false);
   const [emails, setEmails] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
+  const [mainEmails, setmainEmails] = useState("");
+  const [task, setTask] = useState("");
 
   const handleInvite = () => {
-    console.log("Inviting: ", emails);
-    setEmails("");
+    setmainEmails(emails);
+    setEmails("")
+    setShowInviteDiv(false);
+  }
+
+  const handleAddTask = async () => {
+    try {
+      const payload = {
+        task: task,
+        deadline: selectedDate,
+        collaborators: mainEmails
+      }
+
+      await axios.post("/api/v1/add-task", payload);
+
+      setTask("");
+      setSelectedDate(null);
+      setmainEmails("");
+
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const CustomDateInput = forwardRef(({ onClick }, ref) => (
@@ -38,7 +61,13 @@ function Home() {
           <div className='max-w-2xl w-2xl p-8 rounded-2xl shadow-xl ml-60 h-[40vh]'>
             {/* Adding task */}
             <div className='flex items-center mt-4'>
-              <input type="text" className='border border-gray-800 p-2 rounded-xl w-96' placeholder='Enter Task' />
+              <input 
+                type="text" 
+                className='border border-gray-800 p-2 rounded-xl w-96' 
+                placeholder='Enter Task' 
+                value={task}
+                onChange={(e) => setTask(e.target.value)}
+                />
             </div>
 
             {/* set deadline */}
@@ -49,30 +78,29 @@ function Home() {
                 dateFormat="dd/MM/yyyy"
                 customInput={<CustomDateInput />}
               />
-              <input type="text"
-                className='border border-gray-800 p-2 rounded-r-xl w-85'
+              <input
+                type="text"
+                className='border border-gray-800 p-2 rounded-r-xl w-87'
                 placeholder='Set Deadline'
+                value={selectedDate ? selectedDate.toLocaleDateString("en-GB") : ""}
+                readOnly
               />
             </div>
 
             {/* Invite Collaborators */}
             <div className='flex items-start mt-4'>
               <input type="text" 
-                  className='border border-gray-800 p-2 rounded-xl w-75'
+                  className='border border-gray-800 p-2 rounded-xl w-96'
                   placeholder='Invite Collaborators'
+                  value={mainEmails}
                   readOnly
                   onClick={() => setShowInviteDiv(true)}  
               />
-              <button 
-                className='bg-indigo-800 rounded-xl text-white py-2 px-4 ml-1 p-3 w-20 hover:bg-indigo-900' 
-                onClick={() => setShowInviteDiv(true)}>
-                Invite
-              </button>
             </div>
 
             {/* Add task button */}
             <div>
-              <button className='bg-indigo-800 rounded-xl text-white py-2 px-4 p-3 w-96 mt-4 hover:bg-indigo-900' onClick={() => {handleAddTask}}>Add Task</button>
+              <button className='bg-indigo-800 rounded-xl text-white py-2 px-4 p-3 w-96 mt-4 hover:bg-indigo-900' onClick={handleAddTask}>Add Task</button>
             </div>
 
           </div>

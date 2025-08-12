@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import { Task } from "../models/task.model.js";
+import nodemailer from "nodemailer";
 
 const addTask = asyncHandler(async(req, res) => {
     try {
@@ -21,6 +22,25 @@ const addTask = asyncHandler(async(req, res) => {
             .split(",")
             .map(email => email.trim())
             .filter(email => email.length > 0);
+
+        if(collabarr.length > 0) {
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASSWORD,
+                },
+            });
+
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: collabarr.join(","),
+                subject: "You've been invited to collaborate on a task",
+                text: `You've been invited to collaborate on a task: ${task}. Deadline: ${deadline}, created by: ${req.user?.username}.`
+            }
+
+            await transporter.sendMail(mailOptions);
+        }
 
         if(!deadline || new Date(deadline) <= new Date()) {
             throw new ApiError(400, "deadline must be valid future date.")
@@ -162,6 +182,8 @@ const updateTaskStatus = asyncHandler(async(req, res) => {
             .json(new ApiError(500, "Internal server error while updating task status."));
     }
 })
+
+
 
 export {
     addTask,

@@ -46,6 +46,7 @@ const addTask = asyncHandler(async(req, res) => {
             throw new ApiError(400, "deadline must be valid future date.")
         }
         
+        // const formattedDeadline = new Date(deadline).toISOString().split("T")[0];
         const tasks = await Task.create({
                 userId,
                 task,

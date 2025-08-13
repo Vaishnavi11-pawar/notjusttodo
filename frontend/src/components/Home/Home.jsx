@@ -22,7 +22,7 @@ function Home() {
     try {
       const payload = {
         task: task,
-        deadline: selectedDate,
+        deadline: selectedDate ? selectedDate : null,
         collaborators: mainEmails
       }
 

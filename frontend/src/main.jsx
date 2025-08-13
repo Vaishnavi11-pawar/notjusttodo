@@ -8,6 +8,7 @@ import RegisterForm from './components/Auth/RegisterForm.jsx'
 import Layout from './Layout.jsx'
 import HomeLayout from './HomeLayout.jsx'
 import Home from "./components/Home/Home.jsx"
+import Tasks from './components/Tasks/Tasks.jsx'
 
 
 const router = createBrowserRouter(
@@ -19,6 +20,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path='/' element={<HomeLayout />}>
         <Route index element={<Home />}/>
+        <Route path='tasks' element={<Tasks />} />
       </Route>
     </>
   )

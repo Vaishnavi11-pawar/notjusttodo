@@ -135,8 +135,8 @@ const getTasks = asyncHandler(async(req, res) => {
             throw new ApiError(401, "user not found");
         }
 
-        const page = 1;
-        const limit = 10;
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5;
         const offset = (page - 1) * limit;
 
         const tasks = await Task.find({ 
@@ -150,9 +150,22 @@ const getTasks = asyncHandler(async(req, res) => {
             .sort({ createdAt: -1 })
             .populate('userId', 'username email')
 
+            const totalTasks = await Task.countDocuments({
+                $or: [
+                    {userId},
+                    {collaborators: userEmail}
+                ]
+            })
+
         return res
             .status(200)
-            .json(new ApiResponse(200, tasks, "Tasks fetched successfully."));
+            .json(new ApiResponse(200,
+                 {
+                    tasks,
+                    totalPages: Math.ceil(totalTasks/limit),
+                    currentPage: page
+                 },
+                 "Tasks fetched successfully."));
 
     } catch (error) {
         console.log("Error while fetching the tasks: ", error);

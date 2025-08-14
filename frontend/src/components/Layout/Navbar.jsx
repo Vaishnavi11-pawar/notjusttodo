@@ -5,6 +5,8 @@ import axios from 'axios';
 
 function Navbar() {
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+  
   const handleLogout = async () => {
     try {
       const response = await axios.post('/api/v1/logout',
@@ -21,6 +23,7 @@ function Navbar() {
       console.log("logout failed error: ", error);
     }
   }
+
   const activeClass = 'text-indigo-800 font-semibold border-b-2 border-indigo-800'
   const inactiveClass = 'text-black font-semibold hover:text-indigo-800'
 
@@ -42,11 +45,24 @@ function Navbar() {
         >
           My Tasks
         </NavLink>
-        <button 
-          className='bg-white border-2 border-gray-400 text-indigo-700 hover:border-indigo-700 hover:shadow-cyan-50 font-semibold py-2 px-4 rounded ml-8' 
-          onClick={handleLogout}>
+       
+        
+        {token ? (
+          <button
+            className='bg-white border-2 border-gray-400 text-indigo-700 hover:border-indigo-700 hover:shadow-cyan-50 font-semibold py-2 px-4 rounded ml-8'
+            onClick={handleLogout}
+          >
             Logout
           </button>
+        ) : (
+          <button
+            className='bg-indigo-600 text-white font-semibold py-2 px-4 rounded ml-8'
+            onClick={() => navigate('/login')}
+          >
+            Login
+          </button>
+
+        )}
       </div>
       
     </div>

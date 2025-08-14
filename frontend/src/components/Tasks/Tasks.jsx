@@ -12,6 +12,7 @@ function Tasks() {
   const [loading, setLoading] = useState(false);
 
   const owner = localStorage.getItem("owner");
+  const token = localStorage.getItem("token");
 
   const fetchTasks = async (pageNumber) => {
     const token = localStorage.getItem("token");
@@ -197,41 +198,50 @@ function Tasks() {
               </div>
               ))
             }
+              {
+                token ? (
+                  <div className='flex items-center gap-4 mt-4'>
+                    <button
+                      onClick={() => {
+                        if (page > 1) {
+                          const prevPage = page - 1;
+                          setPage(prevPage);
+                          fetchTasks(prevPage);
+                        }
+                      }}
+                      disabled={page === 1 || loading}
+                      className='px-3 py-2 bg-gray-300 rounded disabled:opacity-50'
+                    >
+                    <ChevronLeft /> 
+                    </button>
+
+                    <span className='px-4 py-2 bg-blue-500 text-white rounded'>
+                      {page}
+                    </span>
+
+                    <button
+                      onClick={() => {
+                        if (page < totalPages) {
+                          const nextPage = page + 1;
+                          setPage(nextPage);
+                          fetchTasks(nextPage);
+                        }
+                      }}
+                      disabled={page === totalPages || loading}
+                      className='px-3 py-2 bg-gray-300 rounded disabled:opacity-50'
+                    >
+                      <ChevronRight />
+                    </button>
+                </div>
+
+                ) : (
+                  <div className='flex justify-center items-center mt-10'>
+                    <p className='text-gray-700 font-semibold text-2xl'>You need to be logged in to view tasks.</p>
+                  </div>
+                )
+              }
+
               
-              <div className='flex items-center gap-4 mt-4'>
-                <button
-                  onClick={() => {
-                    if (page > 1) {
-                      const prevPage = page - 1;
-                      setPage(prevPage);
-                      fetchTasks(prevPage);
-                    }
-                  }}
-                  disabled={page === 1 || loading}
-                  className='px-3 py-2 bg-gray-300 rounded disabled:opacity-50'
-                >
-                 <ChevronLeft /> 
-                </button>
-
-                <span className='px-4 py-2 bg-blue-500 text-white rounded'>
-                  {page}
-                </span>
-
-                <button
-                  onClick={() => {
-                    if (page < totalPages) {
-                      const nextPage = page + 1;
-                      setPage(nextPage);
-                      fetchTasks(nextPage);
-                    }
-                  }}
-                  disabled={page === totalPages || loading}
-                  className='px-3 py-2 bg-gray-300 rounded disabled:opacity-50'
-                >
-                  <ChevronRight />
-                </button>
-
-              </div>
 
       </div>
     </>

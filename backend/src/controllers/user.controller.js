@@ -3,6 +3,7 @@ import {ApiError} from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
 import {User} from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+import {Task} from "../models/task.model.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -79,6 +80,13 @@ const loginUser = asyncHandler(async(req, res) => {
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)
 
+    const tasks = await Task.find({
+        $or: [
+            {userId: user._id},
+            {collaborators: user.email}
+        ]
+    })
+
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
     if (!loggedInUser) {
@@ -96,7 +104,8 @@ const loginUser = asyncHandler(async(req, res) => {
         .json(new ApiResponse(200, 
             {
                 user: loggedInUser,
-                accessToken
+                accessToken,
+                tasks
             }
             , "User logged in successfully"))
 

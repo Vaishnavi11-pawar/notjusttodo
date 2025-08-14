@@ -1,6 +1,7 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import logopng from "../../assets/Todologo.png";
+import axios from 'axios';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -17,17 +18,30 @@ function Navbar() {
       navigate('/login');
 
     } catch (error) {
-      
+      console.log("logout failed error: ", error);
     }
   }
+  const activeClass = 'text-indigo-800 font-semibold border-b-2 border-indigo-800'
+  const inactiveClass = 'text-black font-semibold hover:text-indigo-800'
+
   return (
     <div className='flex justify-around items-center p-6 shadow text-white h-16 bg-gray-50'>
       <div>
         <h1 className='text-4xl font-bold text-indigo-800'>ToDo</h1>
       </div>
       <div className='flex items-center gap-8'>
-        <h3 className='text-base font-semibold text-black cursor-pointer hover:text-indigo-800'>Home</h3>
-        <h3 className='text-base font-semibold text-black cursor-pointer hover:text-indigo-800'>My Tasks</h3>
+        <NavLink
+          to="/"
+          className={({isActive}) => isActive ? activeClass: inactiveClass}
+        >
+          Home
+        </NavLink>
+        <NavLink
+          to="/tasks"
+          className={({isActive}) => isActive ? activeClass : inactiveClass}
+        >
+          My Tasks
+        </NavLink>
         <button 
           className='bg-white border-2 border-gray-400 text-indigo-700 hover:border-indigo-700 hover:shadow-cyan-50 font-semibold py-2 px-4 rounded ml-8' 
           onClick={handleLogout}>

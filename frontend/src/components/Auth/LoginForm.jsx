@@ -17,10 +17,12 @@ function LoginForm() {
             const response = await axios.post('/api/v1/login', {email, password});
             const accessToken = response.data?.data?.accessToken;
             const username = response.data?.data?.user?.username;
+            const owner = response.data?.data?.user?._id;
 
             if(accessToken) {
                 localStorage.setItem('token', accessToken);
                 localStorage.setItem('username', username);
+                localStorage.setItem('owner', owner);
                 console.log("logged in successfully");
                 navigate('/');
             }

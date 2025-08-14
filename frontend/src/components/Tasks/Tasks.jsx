@@ -7,6 +7,7 @@ function Tasks() {
   const [todos, setTodos] = useState([]);
   const [editText, setEditText] = useState("");
   const [editTaskId, setEditTaskId] = useState(null);
+  const owner = localStorage.getItem("owner");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -133,9 +134,6 @@ function Tasks() {
                   </div> 
                 </div>
                 <div className='flex flex-col gap-1'>
-                  {/* <p className='text-2xl font-medium text-gray-800 mb-2'>{todo.task}</p>
-                  <p className='text-sm text-gray-500'>{`created_at: ${new Date(todo.createdAt).toLocaleString()}`}</p>
-                  <p className='text-sm text-gray-500'>{`deadline: ${new Date(todo.deadline).toLocaleString()}`}</p> */}
 
                   {
                     editTaskId === todo._id ? (
@@ -158,7 +156,10 @@ function Tasks() {
                       <>
                       <p className='text-2xl font-medium text-gray-800 mb-2'>{todo.task}</p>
                       <p className='text-sm text-gray-500'>{`created_at: ${new Date(todo.createdAt).toLocaleString()}`}</p>
-                      <p className='text-sm text-gray-500'>{`deadline: ${new Date(todo.deadline).toLocaleString()}`}</p>
+                      <div className='flex flex-row justify-between'>
+                        <p className='text-sm text-gray-500'>{`deadline: ${new Date(todo.deadline).toLocaleString()}`}</p>
+                        <p className='text-md font-semibold text-gray-600'>{`owner: ${todo.userId._id === owner ? "You" : todo.userId.email}`}</p>
+                      </div>
                       </>
                     )
                   }

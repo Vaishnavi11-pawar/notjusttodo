@@ -121,7 +121,6 @@ const updateTask = asyncHandler(async(req, res) => {
             .json(new ApiResponse(200, updatedTask, "Task updated successfully."));
 
     } catch (error) {
-        console.log("Error while updating the task: ", error);
         return res 
             .status(500)
             .json(new ApiError(500, "Internal server error while updating the task."))
@@ -131,7 +130,8 @@ const updateTask = asyncHandler(async(req, res) => {
 const getTasks = asyncHandler(async(req, res) => {
     try {
         const userId = req.user?._id;
-        if(!userId) {
+        const userEmail = req.user?.email; 
+        if(!userId || !userEmail) {
             throw new ApiError(401, "user not found");
         }
 
@@ -139,10 +139,16 @@ const getTasks = asyncHandler(async(req, res) => {
         const limit = 10;
         const offset = (page - 1) * limit;
 
-        const tasks = await Task.find({ userId })
+        const tasks = await Task.find({ 
+            $or: [
+                {userId},
+                {collaborators: userEmail}
+            ]
+         })
             .skip(offset)
             .limit(limit)
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .populate('userId', 'username email')
 
         return res
             .status(200)
@@ -170,7 +176,12 @@ const updateTaskStatus = asyncHandler(async(req, res) => {
         }
     
         existingTask.status = 'completed';
-        const updatedTask = await existingTask.save();
+        // const updatedTask = await existingTask.save();
+        const updatedTask = await Task.findOneAndUpdate(
+            {_id: taskId, userId},
+            {status: 'completed'},
+            {new: true}
+        )
     
         return res
             .status(200)

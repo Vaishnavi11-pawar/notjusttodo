@@ -28,7 +28,11 @@ const userSchema = new Schema(
         deleted: {
             type: Boolean,
             default: false
-        }
+        },
+        tasks: [{
+            type: Schema.Types.ObjectId,
+            ref: "Task"
+        }]
     },
     {
         timestamps: true

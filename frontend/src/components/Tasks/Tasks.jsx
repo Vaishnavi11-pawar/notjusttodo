@@ -121,12 +121,8 @@ function Tasks() {
         }
       })
 
-      const res = await axios.get('/api/v1/get-tasks', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      setTodos(res.data.data);
+      await fetchTasks(page);
+      
       setEditTaskId(null);
       setEditText("");
 

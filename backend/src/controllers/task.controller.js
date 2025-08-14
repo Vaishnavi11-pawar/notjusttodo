@@ -36,7 +36,26 @@ const addTask = asyncHandler(async(req, res) => {
                 from: process.env.EMAIL_USER,
                 to: collabarr.join(","),
                 subject: "You've been invited to collaborate on a task",
-                text: `You've been invited to collaborate on a task: ${task}. Deadline: ${deadline}, created by: ${req.user?.username}.`
+                text: `You've been invited to collaborate on a task: ${task}.
+                    Deadline: ${deadline.toLocaleString()}, 
+                    created by: ${req.user?.username}.`,
+                html: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 600px;">
+                        <h2 style="color: #4F46E5;">You've Been Invited!</h2>
+                        <p>Hello,</p>
+                        <p><strong>${req.user?.username}</strong> has invited you to collaborate on a task:</p>
+                        <div style="background: #f4f4f4; padding: 10px; border-radius: 6px;">
+                            <p><strong>Task:</strong> ${task}</p>
+                            <p><strong>Deadline:</strong> ${new Date(deadline).toLocaleString()}</p>
+                        </div>
+                        <p style="margin-top: 20px;">Click the button below to view the task:</p>
+                        <a href="https://todoapp.com/tasks" style="display: inline-block; padding: 10px 20px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 5px;">
+                            View Task
+                        </a>
+                        <p style="margin-top: 20px; font-size: 12px; color: #666;">If you did not expect this email, please ignore it.</p>
+                    </div>
+                    `
+                
             }
 
             await transporter.sendMail(mailOptions);

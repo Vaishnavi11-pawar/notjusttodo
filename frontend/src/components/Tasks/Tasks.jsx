@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Pencil, CircleCheckBig, Trash2} from "lucide-react";
+import {Pencil, CircleCheckBig, Trash2, ChevronLeft, ChevronRight} from "lucide-react";
 import axios from 'axios';
 
 function Tasks() {
@@ -7,29 +7,63 @@ function Tasks() {
   const [todos, setTodos] = useState([]);
   const [editText, setEditText] = useState("");
   const [editTaskId, setEditTaskId] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   const owner = localStorage.getItem("owner");
 
-  useEffect(() => {
+  const fetchTasks = async (pageNumber) => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      console.log("No token found");
-      return;
+    if (!token) return;
+    setLoading(true);
+    try {
+      const res = await axios.get(`/api/v1/get-tasks?page=${pageNumber}&limit=5`, {
+        headers: {Authorization: `Bearer ${token}`}
+      })
+      const {tasks, totalPages} = res.data.data;
+      setTodos(tasks);
+      setTotalPages(totalPages);
+      
+    } catch (error) {
+      console.log("Error fetching tasks: ", error);
     }
+    setLoading(false);
+  }
 
-    axios.get('/api/v1/get-tasks', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    .then(res => {
-      setTodos(res.data.data);
-      console.log("Tasks fetched successfully: ", res.data.data);
-    })
-    .catch(err => {
-      console.log("Error while fetching tasks: ", err);
-    })
+  useEffect(() => {
+    fetchTasks(1);
+  }, []);
 
-  }, [])
+  // const handleLoadMore = () => {
+  //   if (page < totalPages) {
+  //     const nextPage = page + 1;
+  //     setPage(nextPage);
+  //     fetchTasks(nextPage);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (!token) {
+  //     console.log("No token found");
+  //     return;
+  //   }
+
+  //   axios.get('/api/v1/get-tasks', {
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`
+  //     }
+  //   })
+  //   .then(res => {
+  //     setTodos(res.data.data);
+  //     console.log("Tasks fetched successfully: ", res.data.data);
+  //   })
+  //   .catch(err => {
+  //     console.log("Error while fetching tasks: ", err);
+  //   })
+
+  // }, [])
 
   const handleDeleteTask = async (taskId) => {
     const token = localStorage.getItem("token");
@@ -167,6 +201,42 @@ function Tasks() {
               </div>
               ))
             }
+              
+              <div className='flex items-center gap-4 mt-4'>
+                <button
+                  onClick={() => {
+                    if (page > 1) {
+                      const prevPage = page - 1;
+                      setPage(prevPage);
+                      fetchTasks(prevPage);
+                    }
+                  }}
+                  disabled={page === 1 || loading}
+                  className='px-3 py-2 bg-gray-300 rounded disabled:opacity-50'
+                >
+                 <ChevronLeft /> 
+                </button>
+
+                <span className='px-4 py-2 bg-blue-500 text-white rounded'>
+                  {page}
+                </span>
+
+                <button
+                  onClick={() => {
+                    if (page < totalPages) {
+                      const nextPage = page + 1;
+                      setPage(nextPage);
+                      fetchTasks(nextPage);
+                    }
+                  }}
+                  disabled={page === totalPages || loading}
+                  className='px-3 py-2 bg-gray-300 rounded disabled:opacity-50'
+                >
+                  <ChevronRight />
+                </button>
+
+              </div>
+
       </div>
     </>
   )

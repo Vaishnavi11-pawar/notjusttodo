@@ -28,28 +28,43 @@ function Navbar() {
   const inactiveClass = 'text-black font-semibold hover:text-indigo-800'
 
   return (
-    <div className='flex justify-around items-center p-6 shadow text-white h-16 bg-gray-50'>
+    <div className='flex justify-start items-center p-6 text-white h-16 bg-gray-100'>
       <div>
-        <h1 className='text-4xl font-bold text-indigo-800'>ToDo</h1>
+        <h1 className='text-3xl font-bold text-indigo-700 text-shadow-black ml-60'>NotJust<span className='text-indigo-800'>ToDo</span></h1>
       </div>
-      <div className='flex items-center gap-8'>
-        <NavLink
-          to="/"
-          className={({isActive}) => isActive ? activeClass: inactiveClass}
-        >
-          Home
-        </NavLink>
-        <NavLink
-          to="/tasks"
-          className={({isActive}) => isActive ? activeClass : inactiveClass}
-        >
-          My Tasks
-        </NavLink>
+      <div className='flex items-center gap-15 ml-95'>
+        {
+          token ? (
+            <>
+            <NavLink
+              to="/"
+              className={({isActive}) => isActive ? activeClass: inactiveClass}
+            >
+              Home
+            </NavLink>
+            <NavLink
+              to="/tasks"
+              className={({isActive}) => isActive ? activeClass : inactiveClass}
+            >
+              My Tasks
+            </NavLink>
+            </>
+          ) : (
+            <>
+            <NavLink
+              to="/"
+              className={({isActive}) => isActive ? activeClass: inactiveClass}
+            >
+              Home
+            </NavLink>
+            </>
+          )
+        }
        
         
         {token ? (
           <button
-            className='bg-white border-2 border-gray-400 text-indigo-700 hover:border-indigo-700 hover:shadow-cyan-50 font-semibold py-2 px-4 rounded ml-8'
+            className='bg-white border-2 border-gray-400 text-indigo-700 hover:border-indigo-700 hover:shadow-cyan-50 font-semibold py-2 px-4 rounded ml-30'
             onClick={handleLogout}
           >
             Logout

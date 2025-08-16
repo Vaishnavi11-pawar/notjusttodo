@@ -9,6 +9,7 @@ import Layout from './Layout.jsx'
 import HomeLayout from './HomeLayout.jsx'
 import Home from "./components/Home/Home.jsx"
 import Tasks from './components/Tasks/Tasks.jsx'
+import TaskLayout from './TaskLayout.jsx'
 
 
 const router = createBrowserRouter(
@@ -20,6 +21,8 @@ const router = createBrowserRouter(
       </Route>
       <Route path='/' element={<HomeLayout />}>
         <Route index element={<Home />}/>
+      </Route>
+      <Route path='/' element={<TaskLayout />}>
         <Route path='tasks' element={<Tasks />} />
       </Route>
     </>

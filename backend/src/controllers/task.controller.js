@@ -21,7 +21,7 @@ const addTask = asyncHandler(async(req, res) => {
         const collabarr = collaborators
             .split(",")
             .map(email => email.trim())
-            .filter(email => email.length > 0);
+            .filter(email => email.length > 0 && email.toLowerCase() != req.user?.email.toLowerCase());
 
         if(collabarr.length > 0) {
             const transporter = nodemailer.createTransport({
@@ -65,7 +65,6 @@ const addTask = asyncHandler(async(req, res) => {
             throw new ApiError(400, "deadline must be valid future date.")
         }
         
-        // const formattedDeadline = new Date(deadline).toISOString().split("T")[0];
         const tasks = await Task.create({
                 userId,
                 task,
